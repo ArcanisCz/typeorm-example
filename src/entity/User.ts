@@ -1,4 +1,5 @@
-import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from "typeorm";
+import {Todo} from "./Todo";
 
 @Entity()
 export class User {
@@ -12,4 +13,6 @@ export class User {
     @Column()
     lastName: string;
 
+    @ManyToMany(type => Todo)
+    todos: Todo[];
 }
