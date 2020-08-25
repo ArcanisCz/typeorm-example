@@ -1,5 +1,6 @@
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from "typeorm";
 import {Todo} from "./Todo";
+import {Index} from "typeorm/index";
 
 @Entity()
 export class User {
@@ -8,9 +9,10 @@ export class User {
     id: number;
 
     @Column()
+    @Index({unique: true})
     firstName: string;
 
-    @Column()
+    @Column({nullable: true})
     lastName: string;
 
     @ManyToMany(type => Todo)
