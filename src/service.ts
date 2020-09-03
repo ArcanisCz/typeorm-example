@@ -9,7 +9,12 @@ export const getTodos = async (text: string | undefined): Promise<Todo[]> => {
     if (text) {
         return await todosRepo.find({where: {text}});
     } else {
-        return await todosRepo.find();
+        // query builder
+        return await todosRepo.createQueryBuilder("todo")
+            .where("todo.text = :text", {text})
+            .getMany();
+        // basic
+        // return await todosRepo.find();
     }
 }
 
