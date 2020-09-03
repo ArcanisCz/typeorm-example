@@ -4,7 +4,9 @@ import {createConnection} from "typeorm";
 
 import {getTodos, addTodo} from "./service";
 
-createConnection().then(() => {
+createConnection().then(async (a) => {
+    await a.runMigrations()
+
     const app = express();
     app.use(express.json());
 
