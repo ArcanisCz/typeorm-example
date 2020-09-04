@@ -1,22 +1,46 @@
 import * as express from "express";
 import {Request, Response} from "express";
 import {createConnection} from "typeorm";
+import {String, Record, Static} from "runtypes";
+import {configure, getLogger} from "log4js";
 
 import {getTodos, addTodo} from "./service";
 
+const TodoFilterChecker = Record({
+    text: String,
+    text1: String,
+});
+type TodoFilter = Static<typeof TodoFilterChecker>;
+
+configure({
+    appenders: {
+        everything:{ type: "stdout"  },
+    },
+    categories: {
+        default: {
+            appenders: [ "everything"], level: "all"},
+    }
+});
+
+const LOGGER = getLogger("app");
+
 createConnection().then(async (a) => {
-    await a.runMigrations()
+    // await a.runMigrations();
 
     const app = express();
     app.use(express.json());
 
-    app.get("/todo/", async function(req: Request, res: Response) {
-        const text = req.query?.text as string;
-        const result = await getTodos(text);
-        res.json(result);
+    app.get("/todo/", async function (req: Request<any, any, any, TodoFilter>, res: Response) {
+        const b = TodoFilterChecker.validate(req.query);
+        if (b.success === false) {
+            res.status(401).send(b);
+        } else {
+            const result = await getTodos(b.value.text);
+            res.json(result);
+        }
     });
 
-    app.post("/todo/", async function(req: Request, res: Response) {
+    app.post("/todo/", async function (req: Request, res: Response) {
         const text = req.body?.text as string;
         const userNames = req.body?.users as string[];
         const result = await addTodo(text, userNames);

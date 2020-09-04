@@ -1,25 +1,16 @@
 import {getConnection, Repository, In} from "typeorm";
-import {getLogger, configure} from "log4js";
+import {getLogger} from "log4js";
 
 import {Todo} from "./entity/Todo";
 import {User} from "./entity/User";
 
-configure({
-    appenders: {
-        everything:{ type: 'stdout'  },
-    },
-    categories: {
-        default: {
-            appenders: [ 'everything'], level: 'all'},
-    }
-})
+const LOGGER = getLogger("service");
 
 export const getTodos = async (text: string | undefined): Promise<Todo[]> => {
     const todosRepo: Repository<Todo> = getConnection().getRepository(Todo);
-    const logger = getLogger("getTodos");
 
     if (text) {
-        logger.debug("aaa");
+        LOGGER.debug("aaa");
         // query builder
         return await todosRepo.createQueryBuilder("todo")
             .where("todo.text = :text", {text})
