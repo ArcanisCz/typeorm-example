@@ -3,6 +3,7 @@ import {Request, Response} from "express";
 import {createConnection} from "typeorm";
 import {String, Record, Static} from "runtypes";
 import {configure, getLogger} from "log4js";
+import {string, object} from "joi";
 
 import {getTodos, addTodo} from "./service";
 
@@ -29,6 +30,15 @@ createConnection().then(async (a) => {
 
     const app = express();
     app.use(express.json());
+
+    const aaa = object({
+        aa: string().required(),
+        bb: string().required(),
+    });
+
+    const {error, value} = aaa.validate({aa: "dasdas", bb: "ddd", cc: "ccc"}, {abortEarly: false});
+    LOGGER.error(error);
+    LOGGER.debug(value);
 
     app.get("/todo/", async function (req: Request<any, any, any, TodoFilter>, res: Response) {
         const b = TodoFilterChecker.validate(req.query);
